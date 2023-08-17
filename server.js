@@ -20,8 +20,16 @@ app.use(express.json({ extended: false }));
 
 // *************************************** ROUTES / PAGES
 // main page
-app.get("/", (req,res) => {
-    res.send('HELLO👋🏼')
+app.get("/", async(req,res) => {
+    // res.send('HELLO👋🏼')
+    // ************************INDEX ROUTE***
+    try {
+        const allPosts = await Post.find({});
+        res.send(allPosts)
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error")
+    }
 })
 
 // create route [C]RUD
