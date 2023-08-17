@@ -6,7 +6,7 @@ const app = express();
 const mongoose = require('mongoose');
 // required for .env
 require('dotenv').config()
-// schema
+// schema - model
 const Post = require('./models/Post')
 
 // ************************************** MIDDLEWARE
@@ -19,7 +19,7 @@ mongoose.connection.once('open', ()=> {
 app.use(express.json({ extended: false }));
 
 // *************************************** ROUTES / PAGES
-// main page
+// main page C[R]UD
 app.get("/", async(req,res) => {
     // res.send('HELLO👋🏼')
     // ********************************** INDEX ROUTE***
@@ -32,10 +32,24 @@ app.get("/", async(req,res) => {
     }
 })
 
+// ************************************** CREATE
+// create route [C]RUD
+app.post('/', async(req,res) => {
+    try {
+       const post = await Post.create(req.body) // req.body does not have _id
+       res.send(post) // this will have an _id
+    } catch (err) {
+        // console.error(err);
+        console.error(err)
+        res.status(500).send("Create Server Error")
+    }
+})
+
 // ************************************** DELETE
+// CRU[D]
 app.delete('/:id', async(req,res) => {
     try {
-        await Post.findByIdAndDelete(req.params.id)
+        await Post.findByIdAndDelete(req.params.id);
         res.send('Post Deleted')
     } catch (err) {
         console.error(err);
@@ -53,19 +67,6 @@ app.put('/:id', async(req,res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send("Update Server Error")
-    }
-})
-
-
-// create route [C]RUD
-app.post('/', async(req,res) => {
-    try {
-       const post = await Post.create(req.body)
-       res.send(post) // this will have an _id
-    } catch (err) {
-        // console.error(err);
-        console.error(err.message)
-        res.status(500).send("Server Error")
     }
 })
 
